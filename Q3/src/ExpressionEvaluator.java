@@ -26,6 +26,12 @@ public class ExpressionEvaluator {
     }
 
     static class NumberValue implements Expression {
+        /**
+         * Abstraction Function:
+         *    constant number
+         * Representation Invariant:
+         *    the value is not NaN
+         */
         private final double value;
 
         public NumberValue(Number value) {
@@ -34,20 +40,33 @@ public class ExpressionEvaluator {
 
         @Override
         public double eval() {
+            checkRep();
             return value;
         }
 
         @Override
         public String toString() {
+            checkRep();
             if (value == Math.floor(value)) { // int
                 DecimalFormat format = new DecimalFormat("0.#");
                 return format.format(value);
             }
             return String.valueOf(value); // double
         }
+
+        private void checkRep() {
+            assert !Double.isNaN(value);
+        }
     }
 
     static class Addition implements Expression {
+        /**
+         * Abstraction Function:
+         *    left + right
+         * Representation Invariant:
+         *    left != null && right != null
+         */
+
         private final Expression left, right;
 
         public Addition(Expression left, Expression right) {
@@ -57,16 +76,29 @@ public class ExpressionEvaluator {
 
         @Override
         public double eval() {
+            checkRep();
             return left.eval() + right.eval();
         }
 
         @Override
         public String toString() {
+            checkRep();
             return "(" + left + " + " + right + ")";
+        }
+
+        private void checkRep() {
+            assert left != null;
+            assert right != null;
         }
     }
 
     static class Multiplication implements Expression {
+        /**
+         * Abstraction Function:
+         *    left * right
+         * Representation Invariant:
+         *    left != null && right != null
+         */
         private final Expression left, right;
 
         public Multiplication(Expression left, Expression right) {
@@ -76,30 +108,49 @@ public class ExpressionEvaluator {
 
         @Override
         public double eval() {
+            checkRep();
             return left.eval() * right.eval();
         }
 
         @Override
         public String toString() {
+            checkRep();
             return "(" + left + " * " + right + ")";
+        }
+
+        private void checkRep() {
+            assert left != null;
+            assert right != null;
         }
     }
 
     static class UnaryMinus implements Expression {
-        private final Expression operand;
+        /**
+         * Abstraction Function:
+         *    -exp
+         * Representation Invariant:
+         *    exp != null
+         */
+        private final Expression exp;
 
-        public UnaryMinus(Expression operand) {
-            this.operand = operand;
+        public UnaryMinus(Expression exp) {
+            this.exp = exp;
         }
 
         @Override
         public double eval() {
-            return -operand.eval();
+            checkRep();
+            return -exp.eval();
         }
 
         @Override
         public String toString() {
-            return "(-" + operand + ")";
+            checkRep();
+            return "(-" + exp + ")";
+        }
+
+        private void checkRep() {
+            assert exp != null;
         }
     }
 }
